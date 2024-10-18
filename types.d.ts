@@ -29,3 +29,17 @@ export type TComment = {
   };
   postId: string;
 };
+
+export type TNotification = {
+  id: string;
+  activity: string;
+  to: {
+    name: string;
+    email: string;
+  };
+  actor: {
+    name: string;
+    email: string;
+  };
+  seen: boolean;
+};
