@@ -1,6 +1,5 @@
 import { httpCommon } from "@/lib/utils";
-import { useAuth } from "@/store/context/auth";
-import { useNavigation, useRouter } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
@@ -21,9 +20,7 @@ const styles = {
 };
 
 export default function SignUpScreen(props: any) {
-  const { setUser } = useAuth();
   const _navigation = useNavigation();
-  const router = useRouter();
 
   const [error, setError] = useState<string | null>();
   const [showPassword, setShowPassword] = useState(false);
@@ -54,6 +51,7 @@ export default function SignUpScreen(props: any) {
           type: "success",
           text1: "Signup successfull",
         });
+        router.push("/");
       }
     },
   });
