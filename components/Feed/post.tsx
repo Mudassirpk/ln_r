@@ -1,5 +1,5 @@
 import { styles } from "@/styles/global";
-import { TPost } from "@/types";
+import { TComment, TPost } from "@/types";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { View, Text } from "react-native";
 import { feed } from "./feed.style";
@@ -7,13 +7,17 @@ import * as timeago from "timeago.js";
 import { httpCommon } from "@/lib/utils";
 import { useMutation } from "react-query";
 import { useAuth } from "@/store/context/auth";
-import { queryClient } from "@/store/context/query_client";
 import { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
+import Comment from "./comment";
 
 export default function Post({ post }: { post: TPost }) {
   const [likes, setLikes] = useState(post.likes.length);
   const [isLiked, setIsLiked] = useState(false);
+
+  const [comments, setComments] = useState<TComment[]>([]);
+  const [showComments, setShowComments] = useState(false);
+
   const { user, token } = useAuth();
   const { mutate: like, status: likeStatus } = useMutation({
     async mutationFn({ post }: { post: string }) {
@@ -43,6 +47,7 @@ export default function Post({ post }: { post: TPost }) {
 
   useEffect(() => {
     setLikes(post.likes.length);
+    setComments(post.comments || []);
     const isLiked = post.likes.find((like) => like.from.email === user?.email);
     if (isLiked) {
       setIsLiked(true);
@@ -68,36 +73,114 @@ export default function Post({ post }: { post: TPost }) {
         <Text style={feed.user}>{post.author.name}</Text>
         <Text>{timeago.format(post.createdAt)}</Text>
       </View>
-      <Text style={{ ...feed.post, paddingBottom: 5 }}>{post.message}</Text>
+      <Text style={{ ...feed.post, paddingBottom: 20, paddingTop: 20 }}>
+        {post.message}
+      </Text>
       <View
         style={{
           borderTopColor: "#e0dede",
           borderTopWidth: 1,
-          paddingTop: 5,
+          paddingTop: 10,
           display: "flex",
           gap: 5,
-          alignItems: "center",
+          alignItems: "flex-end",
           flexDirection: "row",
-          justifyContent: "flex-end",
+          justifyContent: "space-between",
         }}
       >
-        <Text>{likes}</Text>
-        <View>
-          <AntDesign
-            onPress={() => {
-              if (!isLiked) {
-                like({ post: post.id });
-              }
-            }}
-            color={isLiked ? "blue" : "grey"}
-            name="like2"
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "flex-end",
+            gap: 5,
+          }}
+        >
+          <Text
             style={{
-              alignSelf: "flex-end",
+              color: "black",
             }}
+          >
+            {comments.length}
+          </Text>
+          <AntDesign
+            onPress={() => setShowComments(!showComments)}
+            name="message1"
             size={24}
           />
         </View>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 5,
+            alignItems: "flex-end",
+          }}
+        >
+          <Text>{likes}</Text>
+          <View>
+            {" "}
+            <AntDesign
+              onPress={() => {
+                if (!isLiked) {
+                  like({ post: post.id });
+                }
+              }}
+              color={isLiked ? "blue" : "grey"}
+              name="like2"
+              style={{
+                alignSelf: "flex-end",
+              }}
+              size={24}
+            />
+          </View>
+        </View>
       </View>
+      {showComments && (
+        <>
+          <Comment setComments={setComments} postId={post.id} />
+          <View style={{ ...styles.roundedBorder, marginTop: 10, padding: 10 }}>
+            {comments.map((comment) => {
+              return (
+                <View
+                  key={comment.id}
+                  style={{
+                    width: "100%",
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    backgroundColor: "#e5e7ea",
+                    paddingLeft: 5,
+                    paddingRight: 5,
+                    borderRadius: 5,
+                    marginBottom: 5,
+                  }}
+                >
+                  <Text
+                    style={{
+                      marginTop: 5,
+                      marginBottom: 5,
+                    }}
+                  >
+                    {comment.message}
+                  </Text>
+                  <Text
+                    style={{
+                      borderLeftWidth: 1,
+                      borderLeftColor: "white",
+                      paddingLeft: 5,
+                    }}
+                  >
+                    {comment.from.name}
+                  </Text>
+                </View>
+              );
+            })}
+          </View>
+        </>
+      )}
     </View>
   );
 }
