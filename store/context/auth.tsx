@@ -1,3 +1,4 @@
+import { TNotification } from "@/types";
 import React, { SetStateAction } from "react";
 
 export type TAuthContext = {
@@ -15,6 +16,7 @@ export type TUser = {
   id: string;
   name: string;
   email: string;
+  notifications: TNotification[];
 };
 
 export type TPost = {
