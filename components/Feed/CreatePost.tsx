@@ -48,7 +48,7 @@ export default function CreatePost() {
       <TextInput
         value={message}
         onChangeText={(message) => setMessage(message)}
-        placeholder="What on you mind !"
+        placeholder="What's on your mind !"
         placeholderTextColor={"#aaaaaa"}
         style={createPost.input}
       ></TextInput>
