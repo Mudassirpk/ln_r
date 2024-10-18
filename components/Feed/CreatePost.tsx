@@ -1,4 +1,10 @@
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { createPost } from "./create-post.style";
 import { styles } from "@/styles/global";
 import { useAuth } from "@/store/context/auth";
@@ -33,6 +39,7 @@ export default function CreatePost() {
           text1: response.message,
         });
         queryClient.invalidateQueries({ queryKey: ["get-posts"] });
+        setMessage("");
       } else {
         Toast.show({
           type: "error",
@@ -62,14 +69,18 @@ export default function CreatePost() {
               }
             }}
           >
-            <Text
-              style={{
-                color: "white",
-                ...createPost.button,
-              }}
-            >
-              Create
-            </Text>
+            {status === "loading" ? (
+              <ActivityIndicator />
+            ) : (
+              <Text
+                style={{
+                  color: "white",
+                  ...createPost.button,
+                }}
+              >
+                Create
+              </Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>

@@ -23,11 +23,21 @@ export default function Notifications({
         opacity: 1,
       }}
     >
-      {notifications.map((notification) => {
-        return (
-          <Notification key={notification.id} notification={notification} />
-        );
-      })}
+      {notifications.length === 0 ? (
+        <Text
+          style={{
+            color: "white",
+          }}
+        >
+          You are caught up for now
+        </Text>
+      ) : (
+        notifications.map((notification) => {
+          return (
+            <Notification key={notification.id} notification={notification} />
+          );
+        })
+      )}
     </View>
   );
 }
