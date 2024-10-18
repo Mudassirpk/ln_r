@@ -2,7 +2,7 @@ import { httpCommon } from "@/lib/utils";
 import { useAuth } from "@/store/context/auth";
 import { TComment } from "@/types";
 import React, { SetStateAction, useState } from "react";
-import { TextInput, TouchableOpacity, View, Text } from "react-native";
+import { TextInput, Pressable, View, Text } from "react-native";
 import Toast from "react-native-toast-message";
 import { useMutation } from "react-query";
 
@@ -67,7 +67,7 @@ export default function Comment({
         placeholderTextColor={"#acb6c4"}
       />
       <View>
-        <TouchableOpacity
+        <Pressable
           disabled={status === "loading"}
           onPress={() => {
             if (message.length > 0) {
@@ -89,7 +89,7 @@ export default function Comment({
           >
             Comment
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );

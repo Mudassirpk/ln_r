@@ -2,7 +2,7 @@ import { httpCommon } from "@/lib/utils";
 import { useAuth } from "@/store/context/auth";
 import { Link, useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Text, TextInput, Pressable, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { useMutation } from "react-query";
 
@@ -157,7 +157,7 @@ export default function LoginScreen(props: any) {
             justifyContent: "flex-end",
           }}
         >
-          <TouchableOpacity
+          <Pressable
             style={{
               cursor: "pointer",
             }}
@@ -167,7 +167,7 @@ export default function LoginScreen(props: any) {
               {" "}
               {showPassword ? "Hide password" : "show password"}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         {error && (
@@ -190,7 +190,7 @@ export default function LoginScreen(props: any) {
             justifyContent: "center",
           }}
         >
-          <TouchableOpacity
+          <Pressable
             disabled={status === "loading"}
             onPress={() => login()}
             style={{
@@ -209,7 +209,7 @@ export default function LoginScreen(props: any) {
             >
               Login
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
         <Link
           style={{

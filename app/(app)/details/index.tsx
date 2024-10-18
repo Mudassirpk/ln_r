@@ -1,7 +1,7 @@
 import { useAuth } from "@/store/context/auth";
 import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { View, Text, Button, TouchableOpacity } from "react-native";
+import { View, Text, Button, Pressable } from "react-native";
 import { home } from "./styles";
 import { styles } from "@/styles/global";
 import CreatePost from "@/components/Feed/CreatePost";
@@ -41,9 +41,9 @@ export default function Details() {
           }}
         >
           <View>
-            <TouchableOpacity onPress={() => logout()}>
+            <Pressable onPress={() => logout()}>
               <Text style={styles.logout}>Logout</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
           <View
             style={{

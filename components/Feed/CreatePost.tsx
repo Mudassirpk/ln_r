@@ -2,8 +2,9 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
+  Pressable,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import { createPost } from "./create-post.style";
 import { styles } from "@/styles/global";
@@ -13,10 +14,13 @@ import { useMutation } from "react-query";
 import { httpCommon } from "@/lib/utils";
 import Toast from "react-native-toast-message";
 import { queryClient } from "@/store/context/query_client";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { launchImageLibrary } from "react-native-image-picker";
 
 export default function CreatePost() {
   const { user, token } = useAuth();
   const [message, setMessage] = useState("");
+  const [imageUri, setImageUri] = useState<string | null | undefined>(null);
 
   const { mutate, status } = useMutation({
     async mutationFn() {
@@ -55,13 +59,51 @@ export default function CreatePost() {
       <TextInput
         value={message}
         onChangeText={(message) => setMessage(message)}
-        placeholder="What's on your mind !"
+        placeholder="What's on your mind!"
         placeholderTextColor={"#aaaaaa"}
         style={createPost.input}
-      ></TextInput>
-      <View>
+      />
+      {imageUri && (
+        <Image
+          source={{ uri: imageUri }}
+          style={{ width: "100%", height: 200, marginTop: 5, borderRadius: 5 }}
+        />
+      )}
+      <View
+        style={{
+          width: "100%",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: imageUri ? 5 : 0,
+        }}
+      >
+        <Ionicons
+          onPress={() => {
+            launchImageLibrary({ mediaType: "photo" }, (res) => {
+              if (res.didCancel) {
+                Toast.show({
+                  type: "info",
+                  text1: "Discarded",
+                });
+              } else if (res.errorMessage) {
+                Toast.show({
+                  type: "error",
+                  text1: res.errorMessage,
+                });
+              } else if (res.assets && res.assets.length > 0) {
+                setImageUri(res.assets[0] ? res.assets[0].uri : null);
+              }
+            });
+          }}
+          name="image"
+          size={24}
+          style={{ color: "green" }}
+        />
         <View>
-          <TouchableOpacity
+          <Pressable
+            style={{ alignSelf: "flex-end" }}
             disabled={status === "loading"}
             onPress={() => {
               if (message.length > 0) {
@@ -81,7 +123,7 @@ export default function CreatePost() {
                 Create
               </Text>
             )}
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </View>
