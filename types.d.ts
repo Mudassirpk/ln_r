@@ -1,5 +1,6 @@
 export type TPost = {
   likes: TLike[];
+  comments: TComment[];
   message: string;
   id: string;
   createdAt: string;
@@ -16,4 +17,15 @@ export type TLike = {
     email: string;
   };
   id: string;
+};
+
+export type TComment = {
+  message: string;
+  id: string;
+  createdAt: string;
+  from: {
+    name: string;
+    email: string;
+  };
+  postId: string;
 };
