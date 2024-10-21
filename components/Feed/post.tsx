@@ -1,7 +1,7 @@
 import { styles } from "@/styles/global";
 import { TComment, TPost } from "@/types";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { View, Text } from "react-native";
+import { View, Text, Image } from "react-native";
 import { feed } from "./feed.style";
 import * as timeago from "timeago.js";
 import { httpCommon } from "@/lib/utils";
@@ -76,6 +76,23 @@ export default function Post({ post }: { post: TPost }) {
       <Text style={{ ...feed.post, paddingBottom: 20, paddingTop: 20 }}>
         {post.message}
       </Text>
+      <View
+        style={{
+          width: "100%",
+        }}
+      >
+        {post.image ? (
+          <Image
+            style={{
+              width: "100%",
+              height: 250,
+              borderRadius: 5,
+            }}
+            source={{ uri: post.image.url }}
+            alt={post.message}
+          />
+        ) : null}
+      </View>
       <View
         style={{
           borderTopColor: "#e0dede",
