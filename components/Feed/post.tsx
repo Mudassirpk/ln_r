@@ -10,6 +10,7 @@ import { useAuth } from "@/store/context/auth";
 import { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
 import Comment from "./comment";
+import { Link } from "expo-router";
 
 export default function Post({ post }: { post: TPost }) {
   const [likes, setLikes] = useState(post.likes.length);
@@ -70,7 +71,15 @@ export default function Post({ post }: { post: TPost }) {
           borderBottomWidth: 1,
         }}
       >
-        <Text style={feed.user}>{post.author.name}</Text>
+        <Link
+          href={{
+            pathname: "/profile/[id]",
+            params: { id: post.author.id },
+          }}
+          style={feed.user}
+        >
+          {post.author.name}
+        </Link>
         <Text>{timeago.format(post.createdAt)}</Text>
       </View>
       <Text style={{ ...feed.post, paddingBottom: 20, paddingTop: 20 }}>
@@ -183,15 +192,20 @@ export default function Post({ post }: { post: TPost }) {
                   >
                     {comment.message}
                   </Text>
-                  <Text
+                  <Link
+                    href={{
+                      pathname: "/profile/[id]",
+                      params: { id: comment.from.id },
+                    }}
                     style={{
                       borderLeftWidth: 1,
                       borderLeftColor: "white",
                       paddingLeft: 5,
+                      backgroundColor: "indigo",
                     }}
                   >
                     {comment.from.name}
-                  </Text>
+                  </Link>
                 </View>
               );
             })}

@@ -49,6 +49,7 @@
     "@babel/core": "^7.20.0",
     "@types/jest": "^29.5.12",
     "@types/react": "~18.2.45",
+    "@types/react-native-fetch-blob": "^0.10.11",
     "@types/react-test-renderer": "^18.0.7",
     "@types/timeago": "^1.6.3",
     "autoprefixer": "^10.4.20",

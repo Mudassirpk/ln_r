@@ -31,6 +31,7 @@ export type TComment = {
   id: string;
   createdAt: string;
   from: {
+    id: string;
     name: string;
     email: string;
   };
@@ -49,4 +50,11 @@ export type TNotification = {
     email: string;
   };
   seen: boolean;
+};
+
+export type TUser = {
+  name: string;
+  email: string;
+  createdAt: string;
+  posts: number;
 };
