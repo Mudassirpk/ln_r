@@ -38,7 +38,13 @@ export default function LoginScreen(props: any) {
 
   const { mutate, status } = useMutation({
     async mutationFn() {
-      return (await httpCommon.post("auth/login", creds)).data;
+      return (
+        await httpCommon.post("auth/login", creds, {
+          headers: {
+            "Content-Type": "application/json;charset=utf-8",
+          },
+        })
+      ).data;
     },
     onSettled(response) {
       if (response.success) {
