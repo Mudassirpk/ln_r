@@ -10,7 +10,7 @@ export default function RootLayout() {
       <AuthProvider>
         <Slot />
       </AuthProvider>
-      <Toast />
+      {typeof window !== "undefined" ? <Toast /> : null}
     </QueryClientProvider>
   );
 }
