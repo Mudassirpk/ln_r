@@ -9,6 +9,7 @@ export type TPost = {
     email: string;
     id: string;
   };
+  image?: TPostImage;
 };
 
 export type TLike = {
@@ -17,6 +18,12 @@ export type TLike = {
     email: string;
   };
   id: string;
+};
+
+export type TPostImage = {
+  url: string;
+  id: string;
+  public_id: string;
 };
 
 export type TComment = {
