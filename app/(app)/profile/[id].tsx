@@ -1,16 +1,16 @@
+import UserFeed from "@/components/userDetails/user-feed";
 import { httpCommon } from "@/lib/utils";
 import { useAuth } from "@/store/context/auth";
 import { TUser } from "@/types";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import axios from "axios";
-import { Link, useLocalSearchParams, useNavigation } from "expo-router";
+import { Link, useGlobalSearchParams, useNavigation } from "expo-router";
 import { useEffect } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { useQuery } from "react-query";
 
 export default function UserProfileScreen() {
   const { token } = useAuth();
-  const params = useLocalSearchParams();
+  const params = useGlobalSearchParams();
   const navigation = useNavigation();
 
   const { data: user, isFetching: loading_user } = useQuery<TUser>({
@@ -119,6 +119,7 @@ export default function UserProfileScreen() {
           </View>
         </View>
       )}
+      <UserFeed userId={params.id as string} />
     </View>
   );
 }

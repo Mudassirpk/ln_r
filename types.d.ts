@@ -8,6 +8,10 @@ export type TPost = {
     name: string;
     email: string;
     id: string;
+    followers: {
+      id: string;
+      followingUserId: string;
+    }[];
   };
   image?: TPostImage;
 };
@@ -57,4 +61,20 @@ export type TUser = {
   email: string;
   createdAt: string;
   posts: number;
+};
+export type TFollowStatus = "ACCEPTED" | "REJECTED" | "PENDING";
+export type TFollower = {
+  status: TFollowStatus;
+  id: string;
+  followedUser: {
+    name: string;
+    id: string;
+    email: string;
+  };
+  followingUser: {
+    name: string;
+    id: string;
+    email: string;
+  };
+  createdAt: string;
 };

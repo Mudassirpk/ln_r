@@ -13,11 +13,17 @@ export default function Details() {
   const { user, logout } = useAuth();
   const navigation = useNavigation();
   const [showNotifications, setShowNotifications] = useState(false);
-
   const router = useRouter();
+  const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
-    if (!user) router.push("/");
-  }, [user]);
+    setIsMounted(true);
+    return () => setIsMounted(false);
+  }, []);
+
+  useEffect(() => {
+    if (!user && isMounted) router.push("/");
+  }, [user, isMounted]);
 
   useEffect(() => {
     navigation.setOptions({ headerShown: false });

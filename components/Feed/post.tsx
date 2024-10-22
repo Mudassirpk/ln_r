@@ -1,7 +1,7 @@
 import { styles } from "@/styles/global";
 import { TComment, TPost } from "@/types";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, Pressable } from "react-native";
 import { feed } from "./feed.style";
 import * as timeago from "timeago.js";
 import { httpCommon } from "@/lib/utils";
@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
 import Comment from "./comment";
 import { Link } from "expo-router";
+import Follow from "../userFollowing/follow";
 
 export default function Post({ post }: { post: TPost }) {
   const [likes, setLikes] = useState(post.likes.length);
@@ -54,6 +55,7 @@ export default function Post({ post }: { post: TPost }) {
       setIsLiked(true);
     }
   }, [post]);
+
   return (
     <View
       style={{ ...styles.container, marginTop: 5, marginBottom: 5 }}
@@ -80,7 +82,17 @@ export default function Post({ post }: { post: TPost }) {
         >
           {post.author.name}
         </Link>
-        <Text>{timeago.format(post.createdAt)}</Text>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 10,
+          }}
+        >
+          <Text>{timeago.format(post.createdAt)}</Text>
+          {post.author.id !== user?.id ? <Follow post={post} /> : null}
+        </View>
       </View>
       <Text style={{ ...feed.post, paddingBottom: 20, paddingTop: 20 }}>
         {post.message}

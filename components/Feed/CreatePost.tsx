@@ -26,8 +26,12 @@ export default function CreatePost() {
     async mutationFn() {
       const formData = new FormData();
 
-      const file = new File([imageUri.uri], "post-image", { type: "image/*" });
-      formData.append("file", file);
+      if (imageUri) {
+        const file = new File([imageUri.uri], "post-image", {
+          type: "image/*",
+        });
+        formData.append("file", file);
+      }
 
       formData.append("message", message);
       formData.append("userId", user?.id as string);
