@@ -2,7 +2,7 @@ import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { TPost } from "@/types";
 import Post from "../Feed/post";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { httpCommon } from "@/lib/utils";
 
 const Posts = ({ userId }: { userId: string }) => {

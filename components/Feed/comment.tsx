@@ -4,7 +4,7 @@ import { TComment } from "@/types";
 import React, { SetStateAction, useState } from "react";
 import { TextInput, Pressable, View, Text } from "react-native";
 import Toast from "react-native-toast-message";
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 
 export default function Comment({
   setComments,
@@ -68,7 +68,7 @@ export default function Comment({
       />
       <View>
         <Pressable
-          disabled={status === "loading"}
+          disabled={status === "pending"}
           onPress={() => {
             if (message.length > 0) {
               mutate();

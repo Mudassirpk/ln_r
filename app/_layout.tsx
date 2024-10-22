@@ -1,6 +1,6 @@
 import { Slot } from "expo-router";
 import AuthProvider from "@/store/provider/auth";
-import { QueryClientProvider } from "react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/store/context/query_client";
 import Toast from "react-native-toast-message";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";

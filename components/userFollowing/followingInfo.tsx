@@ -6,12 +6,12 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { TFollower, TFollowStatus } from "@/types";
-import { useMutation } from "react-query";
+import { TFollowStatus } from "@/types";
+import { useMutation } from "@tanstack/react-query";
 import { httpCommon } from "@/lib/utils";
-import { useAuth } from "@/store/context/auth";
 import Toast from "react-native-toast-message";
-import { Link } from "expo-router";
+import { Link, useGlobalSearchParams } from "expo-router";
+import { useAuth } from "@/store/context/auth";
 
 const FollowInfo = ({
   user,
@@ -29,6 +29,8 @@ const FollowInfo = ({
   userId: string;
 }) => {
   const [accepted, setAccepted] = useState(false);
+  const params = useGlobalSearchParams();
+  const { user: _user } = useAuth();
 
   const { mutate: accept, status: accept_status } = useMutation({
     async mutationFn() {
@@ -101,10 +103,11 @@ const FollowInfo = ({
           {email}
         </Text>
       </Link>
-      {type === "followers" && !accepted ? (
+      {/* only show accept button if the request is not accepted, and viewing user is the logged in user */}
+      {type === "followers" && !accepted && params.id === _user?.id ? (
         <Pressable
           onPress={() => accept()}
-          disabled={accept_status === "loading"}
+          disabled={accept_status === "pending"}
           style={{
             padding: 5,
             borderRadius: 5,
@@ -112,7 +115,7 @@ const FollowInfo = ({
             borderWidth: 1,
           }}
         >
-          {accept_status === "loading" ? (
+          {accept_status === "pending" ? (
             <ActivityIndicator />
           ) : (
             <Text>Accept</Text>

@@ -4,7 +4,7 @@ import { Link, useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Text, TextInput, Pressable, View } from "react-native";
 import Toast from "react-native-toast-message";
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 
 const styles = {
   input: {
@@ -197,7 +197,7 @@ export default function LoginScreen(props: any) {
           }}
         >
           <Pressable
-            disabled={status === "loading"}
+            disabled={status === "pending"}
             onPress={() => login()}
             style={{
               backgroundColor: "#eae54d",

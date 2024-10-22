@@ -8,7 +8,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { TPost } from "@/types";
 import { useAuth } from "@/store/context/auth";
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 import { httpCommon } from "@/lib/utils";
 import Toast from "react-native-toast-message";
 
@@ -55,7 +55,7 @@ const Follow = ({ post }: { post: TPost }) => {
   return (
     <Pressable
       onPress={() => follow()}
-      disabled={follow_status === "loading" || following}
+      disabled={follow_status === "pending" || following}
       style={{
         padding: 5,
         borderRadius: 5,
@@ -63,7 +63,7 @@ const Follow = ({ post }: { post: TPost }) => {
         borderColor: "gray",
       }}
     >
-      {follow_status === "loading" ? (
+      {follow_status === "pending" ? (
         <ActivityIndicator />
       ) : (
         <Text>{following ? "Following" : "Follow"}</Text>

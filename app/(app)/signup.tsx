@@ -3,7 +3,7 @@ import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { Text, TextInput, Pressable, View } from "react-native";
 import Toast from "react-native-toast-message";
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 
 const styles = {
   input: {
@@ -216,7 +216,7 @@ export default function SignUpScreen(props: any) {
           </Pressable>
         </View>
 
-        {error && (
+        {error ? (
           <Text
             style={{
               color: "red",
@@ -225,7 +225,7 @@ export default function SignUpScreen(props: any) {
           >
             {error}
           </Text>
-        )}
+        ) : null}
 
         <View
           style={{
@@ -237,7 +237,7 @@ export default function SignUpScreen(props: any) {
           }}
         >
           <Pressable
-            disabled={status === "loading"}
+            disabled={status === "pending"}
             onPress={() => signup()}
             style={{
               backgroundColor: "#eae54d",

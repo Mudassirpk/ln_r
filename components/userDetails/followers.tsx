@@ -4,15 +4,15 @@ import { useQuery } from "@tanstack/react-query";
 import { httpCommon } from "@/lib/utils";
 import { useAuth } from "@/store/context/auth";
 import { TFollower } from "@/types";
-import FollowInfo from "./followingInfo";
+import FollowInfo from "./../userFollowing/followingInfo";
 
-const Followers = () => {
-  const { token, user } = useAuth();
+const Followers = ({ userId }: { userId: string }) => {
+  const { token } = useAuth();
   const { data: followers, isFetching: loading } = useQuery<TFollower[]>({
-    queryKey: ["get-user-followers"],
+    queryKey: ["get-user-detail-followers"],
     async queryFn() {
       return (
-        await httpCommon.get(`friends/followers/${user?.id}`, {
+        await httpCommon.get(`friends/followers/${userId}`, {
           headers: {
             token: `Bearer ${token}`,
           },
@@ -58,5 +58,4 @@ const Followers = () => {
 };
 
 export default Followers;
-
 const styles = StyleSheet.create({});

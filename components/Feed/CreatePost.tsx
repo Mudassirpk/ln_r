@@ -10,7 +10,7 @@ import { createPost } from "./create-post.style";
 import { styles } from "@/styles/global";
 import { useAuth } from "@/store/context/auth";
 import { useState } from "react";
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
 import { queryClient } from "@/store/context/query_client";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -72,12 +72,12 @@ export default function CreatePost() {
         placeholderTextColor={"#aaaaaa"}
         style={createPost.input}
       />
-      {imageUri && (
+      {imageUri ? (
         <Image
           source={{ uri: imageUri.uri }}
           style={{ width: "100%", height: 200, marginTop: 5, borderRadius: 5 }}
         />
-      )}
+      ) : null}
       <View
         style={{
           width: "100%",
@@ -102,7 +102,6 @@ export default function CreatePost() {
                   text1: res.errorMessage,
                 });
               } else if (res.assets && res.assets.length > 0) {
-                console.log("select res: ", res);
                 setImageUri(res.assets[0] ? res.assets[0] : null);
               }
             });
@@ -114,14 +113,14 @@ export default function CreatePost() {
         <View>
           <Pressable
             style={{ alignSelf: "flex-end" }}
-            disabled={status === "loading"}
+            disabled={status === "pending"}
             onPress={() => {
               if (message.length > 0) {
                 mutate();
               }
             }}
           >
-            {status === "loading" ? (
+            {status === "pending" ? (
               <ActivityIndicator />
             ) : (
               <Text

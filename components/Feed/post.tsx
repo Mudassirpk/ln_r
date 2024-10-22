@@ -5,7 +5,7 @@ import { View, Text, Image, Pressable } from "react-native";
 import { feed } from "./feed.style";
 import * as timeago from "timeago.js";
 import { httpCommon } from "@/lib/utils";
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/store/context/auth";
 import { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
@@ -157,7 +157,6 @@ export default function Post({ post }: { post: TPost }) {
         >
           <Text>{likes}</Text>
           <View>
-            {" "}
             <AntDesign
               onPress={() => {
                 if (!isLiked) {
@@ -174,7 +173,7 @@ export default function Post({ post }: { post: TPost }) {
           </View>
         </View>
       </View>
-      {showComments && (
+      {showComments ? (
         <>
           <Comment setComments={setComments} postId={post.id} />
           <View style={{ ...styles.roundedBorder, marginTop: 10, padding: 10 }}>
@@ -223,7 +222,7 @@ export default function Post({ post }: { post: TPost }) {
             })}
           </View>
         </>
-      )}
+      ) : null}
     </View>
   );
 }

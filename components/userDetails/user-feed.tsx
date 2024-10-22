@@ -9,6 +9,8 @@ import {
 import React, { useState } from "react";
 import Posts from "./posts";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Followers from "./followers";
+import Following from "./following";
 
 const UserFeed = ({ userId }: { userId: string }) => {
   const options = ["posts", "followers", "following"];
@@ -63,6 +65,8 @@ const UserFeed = ({ userId }: { userId: string }) => {
           }}
         >
           {current === "posts" ? <Posts userId={userId} /> : null}
+          {current === "followers" ? <Followers userId={userId} /> : null}
+          {current === "following" ? <Following userId={userId} /> : null}
         </ScrollView>
       </SafeAreaView>
     </View>
