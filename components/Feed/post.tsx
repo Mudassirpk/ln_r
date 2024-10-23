@@ -4,7 +4,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { View, Text, Image, Pressable } from "react-native";
 import { feed } from "./feed.style";
 import * as timeago from "timeago.js";
-import { httpCommon } from "@/lib/utils";
+import { extractHashtags, httpCommon } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/store/context/auth";
 import { useEffect, useState } from "react";
@@ -56,9 +56,16 @@ export default function Post({ post }: { post: TPost }) {
     }
   }, [post]);
 
+  const { textWithoutHashtags, hashtags } = extractHashtags(post.message);
+
   return (
     <View
-      style={{ ...styles.container, marginTop: 5, marginBottom: 5 }}
+      style={{
+        backgroundColor: "#f9f9f9",
+        marginTop: 2,
+        paddingVertical: 10,
+        // marginBottom: 5,
+      }}
       key={post.id}
     >
       <View
@@ -68,20 +75,47 @@ export default function Post({ post }: { post: TPost }) {
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
-          paddingBottom: 5,
           borderBottomColor: "#e0dede",
           borderBottomWidth: 1,
+          paddingHorizontal: 10,
+          paddingBottom: 10,
         }}
       >
-        <Link
-          href={{
-            pathname: "/profile/[id]",
-            params: { id: post.author.id },
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 10,
           }}
-          style={feed.user}
         >
-          {post.author.name}
-        </Link>
+          <View
+            style={{
+              width: 50,
+              height: 50,
+              backgroundColor: "gray",
+              borderRadius: 100,
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
+            {post.author.profile_pic ? (
+              <Image
+                source={{ uri: post.author.profile_pic.url }}
+                style={{ width: "100%", height: "100%", borderRadius: 100 }}
+              />
+            ) : null}
+          </View>
+          <Link
+            href={{
+              pathname: "/profile/[id]",
+              params: { id: post.author.id },
+            }}
+            style={feed.user}
+          >
+            {post.author.name}
+          </Link>
+        </View>
         <View
           style={{
             display: "flex",
@@ -94,9 +128,6 @@ export default function Post({ post }: { post: TPost }) {
           {post.author.id !== user?.id ? <Follow post={post} /> : null}
         </View>
       </View>
-      <Text style={{ ...feed.post, paddingBottom: 20, paddingTop: 20 }}>
-        {post.message}
-      </Text>
       <View
         style={{
           width: "100%",
@@ -107,12 +138,43 @@ export default function Post({ post }: { post: TPost }) {
             style={{
               width: "100%",
               height: 250,
-              borderRadius: 5,
             }}
             source={{ uri: post.image.url }}
             alt={post.message}
           />
         ) : null}
+      </View>
+      <Text
+        style={{ paddingHorizontal: 10, paddingBottom: 20, paddingTop: 20 }}
+      >
+        {textWithoutHashtags}
+      </Text>
+      <View
+        style={{
+          width: "100%",
+          display: "flex",
+          gap: 5,
+          alignItems: "center",
+          flexDirection: "row",
+          marginBottom: 5,
+          paddingHorizontal: 10,
+          flexWrap: "wrap",
+        }}
+      >
+        {hashtags.map((ht) => (
+          <Text
+            key={ht}
+            style={{
+              color: "blue",
+              paddingVertical: 5,
+              paddingHorizontal: 10,
+              borderRadius: 5,
+              backgroundColor: "#f3f2f9",
+            }}
+          >
+            #{ht}
+          </Text>
+        ))}
       </View>
       <View
         style={{
@@ -124,6 +186,7 @@ export default function Post({ post }: { post: TPost }) {
           alignItems: "flex-end",
           flexDirection: "row",
           justifyContent: "space-between",
+          paddingHorizontal: 10,
         }}
       >
         <View
@@ -164,7 +227,7 @@ export default function Post({ post }: { post: TPost }) {
                 }
               }}
               color={isLiked ? "blue" : "grey"}
-              name="like2"
+              name="hearto"
               style={{
                 alignSelf: "flex-end",
               }}
@@ -176,7 +239,14 @@ export default function Post({ post }: { post: TPost }) {
       {showComments ? (
         <>
           <Comment setComments={setComments} postId={post.id} />
-          <View style={{ ...styles.roundedBorder, marginTop: 10, padding: 10 }}>
+          <View
+            style={{
+              borderTopColor: "#f4efef",
+              borderTopWidth: 1,
+              marginTop: 10,
+              padding: 10,
+            }}
+          >
             {comments.map((comment) => {
               return (
                 <View
@@ -186,15 +256,28 @@ export default function Post({ post }: { post: TPost }) {
                     flex: 1,
                     display: "flex",
                     flexDirection: "row",
-                    justifyContent: "space-between",
                     alignItems: "center",
-                    backgroundColor: "#e5e7ea",
                     paddingLeft: 5,
                     paddingRight: 5,
                     borderRadius: 5,
                     marginBottom: 5,
+                    gap: 5,
                   }}
                 >
+                  <Link
+                    href={{
+                      pathname: "/profile/[id]",
+                      params: { id: comment.from.id },
+                    }}
+                    style={{
+                      fontWeight: "700",
+                      borderLeftWidth: 1,
+                      borderLeftColor: "white",
+                      paddingLeft: 5,
+                    }}
+                  >
+                    {comment.from.name}
+                  </Link>
                   <Text
                     style={{
                       marginTop: 5,
@@ -203,20 +286,6 @@ export default function Post({ post }: { post: TPost }) {
                   >
                     {comment.message}
                   </Text>
-                  <Link
-                    href={{
-                      pathname: "/profile/[id]",
-                      params: { id: comment.from.id },
-                    }}
-                    style={{
-                      borderLeftWidth: 1,
-                      borderLeftColor: "white",
-                      paddingLeft: 5,
-                      backgroundColor: "indigo",
-                    }}
-                  >
-                    {comment.from.name}
-                  </Link>
                 </View>
               );
             })}

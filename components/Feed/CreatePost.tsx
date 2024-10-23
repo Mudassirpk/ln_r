@@ -50,7 +50,7 @@ export default function CreatePost() {
           type: "success",
           text1: response.message,
         });
-        queryClient.invalidateQueries({ queryKey: ["get-posts"] });
+        queryClient.invalidateQueries({ queryKey: ["get-infinite-posts"] });
         setImageUri(null);
         setMessage("");
       } else {
@@ -63,14 +63,33 @@ export default function CreatePost() {
   });
 
   return (
-    <View style={styles.container}>
-      <Text>create post</Text>
+    <View
+      style={{
+        backgroundColor: "white",
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+      }}
+    >
+      {/* <Text
+        style={{
+          fontWeight: "600",
+          fontSize: 18,
+        }}
+      >
+        create post
+      </Text> */}
       <TextInput
         value={message}
         onChangeText={(message) => setMessage(message)}
         placeholder="What's on your mind!"
         placeholderTextColor={"#aaaaaa"}
-        style={createPost.input}
+        style={{
+          borderBottomWidth: 1,
+          borderBottomColor: "#F2F2F2",
+          marginTop: 10,
+          marginBottom: 5,
+          paddingVertical: 5,
+        }}
       />
       {imageUri ? (
         <Image

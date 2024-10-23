@@ -1,18 +1,16 @@
 import { useAuth } from "@/store/context/auth";
-import { useNavigation, useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { View, Text, Button, Pressable, Dimensions } from "react-native";
-import { home } from "./styles";
+import { View, Text, Pressable, Dimensions } from "react-native";
 import { styles } from "@/styles/global";
 import CreatePost from "@/components/Feed/CreatePost";
 import Feed from "@/components/Feed";
 import IonIcons from "@expo/vector-icons/Ionicons";
-import Notifications from "@/components/Notifications";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 
 export default function Details() {
   const { user, logout } = useAuth();
   const navigation = useNavigation();
-  const [showNotifications, setShowNotifications] = useState(false);
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
 
@@ -25,22 +23,40 @@ export default function Details() {
     if (!user && isMounted) router.push("/");
   }, [user, isMounted]);
 
-  useEffect(() => {
-    navigation.setOptions({ headerShown: false });
-  }, []);
   return (
     <View
       style={{
-        padding: 10,
+        width: "100%",
         display: "flex",
         flexDirection: "column",
         maxHeight: Dimensions.get("window").height,
+        backgroundColor: "#F2F2F2",
       }}
     >
-      <View style={home.head}>
-        <Text>
+      <View
+        style={{
+          backgroundColor: "white",
+          marginBottom: 3,
+          paddingHorizontal: 5,
+          paddingVertical: 10,
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <Link
+          href={{
+            pathname: "/profile/[id]",
+            params: {
+              id: user?.id as string,
+            },
+          }}
+          style={{
+            fontWeight: "600",
+          }}
+        >
           Hello, {user?.name}, {user?.email}
-        </Text>
+        </Link>
         <View
           style={{
             display: "flex",
@@ -70,20 +86,28 @@ export default function Details() {
                 }}
               ></View>
             ) : null}
-            <IonIcons
-              onPress={() => setShowNotifications(!showNotifications)}
-              size={20}
-              name="notifications"
-            />
+            <View>
+              <IonIcons
+                onPress={() =>
+                  navigation.dispatch(
+                    CommonActions.navigate({
+                      name: "(app)/notifications",
+                      path: "(app)/notifications",
+                    })
+                  )
+                }
+                size={20}
+                name="notifications"
+              />
+            </View>
           </View>
-          {showNotifications && (
-            <Notifications notifications={user?.notifications || []} />
-          )}
         </View>
       </View>
       <CreatePost />
       <Text
         style={{
+          marginTop: 5,
+          backgroundColor: "white",
           ...styles.heading,
           paddingTop: 10,
           paddingBottom: 10,

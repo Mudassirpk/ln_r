@@ -58,17 +58,15 @@ const UserFeed = ({ userId }: { userId: string }) => {
           );
         })}
       </View>
-      <SafeAreaView>
-        <ScrollView
-          style={{
-            height: Dimensions.get("window").height,
-          }}
-        >
-          {current === "posts" ? <Posts userId={userId} /> : null}
-          {current === "followers" ? <Followers userId={userId} /> : null}
-          {current === "following" ? <Following userId={userId} /> : null}
-        </ScrollView>
-      </SafeAreaView>
+      <ScrollView
+        style={{
+          height: Dimensions.get("window").height,
+        }}
+      >
+        {current === "posts" ? <Posts userId={userId} /> : null}
+        {current === "followers" ? <Followers userId={userId} /> : null}
+        {current === "following" ? <Following userId={userId} /> : null}
+      </ScrollView>
     </View>
   );
 };

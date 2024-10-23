@@ -41,6 +41,7 @@ export default function Comment({
           text1: response.message,
         });
         setComments((prev) => [...prev, response.comment]);
+        setMessage("");
       } else {
         Toast.show({
           type: "error",
@@ -51,14 +52,13 @@ export default function Comment({
   });
 
   return (
-    <View>
+    <View style={{ paddingHorizontal: 10 }}>
       <TextInput
         style={{
           marginTop: 10,
           marginBottom: 5,
-          borderWidth: 1,
-          borderColor: "grey",
-          borderRadius: 5,
+          borderBottomColor: "#f4efef",
+          borderBottomWidth: 1,
           padding: 10,
         }}
         value={message}
@@ -72,7 +72,6 @@ export default function Comment({
           onPress={() => {
             if (message.length > 0) {
               mutate();
-              setMessage("");
             }
           }}
           style={{

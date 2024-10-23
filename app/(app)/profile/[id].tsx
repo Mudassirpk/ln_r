@@ -4,14 +4,17 @@ import { useAuth } from "@/store/context/auth";
 import { TUser } from "@/types";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Link, useGlobalSearchParams, useNavigation } from "expo-router";
-import { useEffect } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, Image, Text, View } from "react-native";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { launchImageLibrary } from "react-native-image-picker";
+import Toast from "react-native-toast-message";
 
 export default function UserProfileScreen() {
   const { token } = useAuth();
   const params = useGlobalSearchParams();
-  const navigation = useNavigation();
+  const [image, setImage] = useState<any | null>(null);
 
   const { data: user, isFetching: loading_user } = useQuery<TUser>({
     queryKey: ["get-user-details", params.id],
@@ -26,9 +29,52 @@ export default function UserProfileScreen() {
     },
   });
 
+  const { mutate: upload_profile_pic, status: profile_pic_status } =
+    useMutation({
+      async mutationFn() {
+        const formData = new FormData();
+        const file = new File([image.uri], "image", {
+          type: "image/*",
+        });
+        formData.append("image", file);
+        return await httpCommon.post("auth/profile-pic", formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      },
+    });
+
+  function chooseImage() {
+    launchImageLibrary({ mediaType: "photo" }, (res) => {
+      if (res.didCancel) {
+        Toast.show({
+          type: "info",
+          text1: "Discarded",
+        });
+      } else if (res.errorMessage) {
+        Toast.show({
+          type: "error",
+          text1: res.errorMessage,
+        });
+      } else if (res.assets && res.assets.length > 0) {
+        setImage(res.assets[0] ? res.assets[0] : null);
+      }
+    });
+  }
+
   useEffect(() => {
-    navigation.setOptions({ headerShown: false });
-  }, []);
+    if (image !== user?.profile_pic?.url) {
+      upload_profile_pic();
+    }
+  }, [image]);
+
+  useEffect(() => {
+    if (user && user.profile_pic) {
+      setImage(user.profile_pic.url);
+    }
+  }, [user]);
+
   return (
     <View>
       <View
@@ -37,10 +83,11 @@ export default function UserProfileScreen() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          paddingHorizontal: 10,
+          paddingHorizontal: 5,
           flexDirection: "row",
           borderBottomColor: "grey",
           borderBottomWidth: 1,
+          paddingRight: 20,
         }}
       >
         <Link href={"/details"}>
@@ -61,60 +108,142 @@ export default function UserProfileScreen() {
         <View
           style={{
             padding: 10,
-            width: "100%",
             display: "flex",
-            flexDirection: "column",
-            gap: 10,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          <Text
+          <View
             style={{
-              fontSize: 16,
-              fontWeight: "bold",
+              width: 86,
+              height: 86,
+              backgroundColor: "gray",
+              borderRadius: 100,
+              position: "relative",
+              overflow: "hidden",
             }}
           >
-            {user?.name}
-          </Text>
-          <Text
-            style={{
-              color: "#39373f",
-            }}
-          >
-            {user?.email}
-          </Text>
+            {profile_pic_status === "pending" ? (
+              <ActivityIndicator />
+            ) : (
+              image && (
+                <Image
+                  source={{ uri: image }}
+                  style={{ width: "100%", height: "100%", borderRadius: 100 }}
+                />
+              )
+            )}
+            <View
+              style={{
+                position: "absolute",
+                width: "100%",
+                height: "100%",
+                overflow: "hidden",
+                bottom: 0,
+                display: "flex",
+                justifyContent: "flex-end",
+                flexDirection: "column",
+              }}
+            >
+              <View
+                style={{
+                  height: "50%",
+                  backgroundColor: "rgba(211, 211, 211, 0.5)",
+                }}
+              >
+                <AntDesign
+                  name="edit"
+                  size={22}
+                  onPress={chooseImage}
+                  style={{
+                    marginHorizontal: "auto",
+                    marginTop: 5,
+                    color: "white",
+                  }}
+                />
+              </View>
+            </View>
+          </View>
           <View
             style={{
               display: "flex",
               gap: 5,
               alignItems: "center",
-              flexDirection: "row",
+              justifyContent: "center",
             }}
           >
             <Text
               style={{
-                color: "#39373f",
-                paddingHorizontal: 10,
-                paddingVertical: 5,
-                alignSelf: "flex-start",
-                backgroundColor: "#eae8ef",
-                borderRadius: 5,
+                textAlign: "center",
+                fontSize: 16,
                 fontWeight: "600",
               }}
             >
-              {user?.posts} Posts
+              {user?.posts}
             </Text>
             <Text
               style={{
-                color: "#39373f",
-                paddingHorizontal: 10,
-                paddingVertical: 5,
-                alignSelf: "flex-start",
-                backgroundColor: "#eae8ef",
-                borderRadius: 5,
+                textAlign: "center",
+                fontSize: 16,
                 fontWeight: "600",
               }}
             >
-              Joined {new Date(user?.createdAt as string).toDateString()}
+              Post
+            </Text>
+          </View>
+          <View
+            style={{
+              display: "flex",
+              gap: 5,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text
+              style={{
+                textAlign: "center",
+                fontSize: 16,
+                fontWeight: "600",
+              }}
+            >
+              {user?.followers.length}
+            </Text>
+            <Text
+              style={{
+                textAlign: "center",
+                fontSize: 16,
+                fontWeight: "600",
+              }}
+            >
+              Followers
+            </Text>
+          </View>
+          <View
+            style={{
+              display: "flex",
+              gap: 5,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text
+              style={{
+                textAlign: "center",
+                fontSize: 16,
+                fontWeight: "600",
+              }}
+            >
+              {user?.following.length}
+            </Text>
+            <Text
+              style={{
+                textAlign: "center",
+                fontSize: 16,
+                fontWeight: "600",
+              }}
+            >
+              Following
             </Text>
           </View>
         </View>

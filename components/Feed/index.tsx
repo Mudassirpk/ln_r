@@ -3,11 +3,13 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { httpCommon } from "@/lib/utils";
 import { TPost } from "@/types";
 import Post from "./post";
-import { ScrollView, SafeAreaView } from "react-native";
+import { ScrollView } from "react-native";
 import { useRef } from "react";
+import { useAuth } from "@/store/context/auth";
 
 export default function Feed() {
   const scrollRef = useRef(null);
+  const { token } = useAuth();
 
   const {
     data,
@@ -18,13 +20,19 @@ export default function Feed() {
   } = useInfiniteQuery({
     queryKey: ["get-infinite-posts"],
     async queryFn({ pageParam }) {
-      return (await httpCommon.get(`post?cursor=${pageParam || 0}&limit=${10}`))
-        .data;
+      return (
+        await httpCommon.get(`post?cursor=${pageParam || 0}&limit=${10}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+      ).data;
     },
     getNextPageParam: (lastPage, pages, lastPageParam) => {
       return lastPageParam + 1;
     },
     initialPageParam: 0,
+    enabled: token !== null,
   });
 
   const handleScroll = (event: any) => {
@@ -41,28 +49,23 @@ export default function Feed() {
   };
 
   return (
-    <SafeAreaView
+    <ScrollView
+      onScroll={handleScroll}
+      scrollEventThrottle={100}
+      ref={scrollRef}
       style={{
-        flex: 1,
+        height: "100%",
+        paddingBottom: 100,
       }}
+      showsVerticalScrollIndicator={false}
     >
-      <ScrollView
-        onScroll={handleScroll}
-        ref={scrollRef}
-        style={{
-          height: "100%",
-          paddingBottom: 100,
-        }}
-        showsVerticalScrollIndicator={false}
-      >
-        {data?.pages
-          .map((page) => page.posts)
-          .flat()
-          .map((post: TPost) => {
-            return <Post key={post.id} post={post} />;
-          })}
-        {isFetchingNextPage || loading ? <ActivityIndicator /> : null}
-      </ScrollView>
-    </SafeAreaView>
+      {data?.pages
+        .map((page) => page.posts)
+        .flat()
+        .map((post: TPost) => {
+          return <Post key={post.id} post={post} />;
+        })}
+      {isFetchingNextPage || loading ? <ActivityIndicator /> : null}
+    </ScrollView>
   );
 }
