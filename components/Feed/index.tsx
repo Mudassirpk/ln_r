@@ -1,23 +1,13 @@
-import { Text, Dimensions, ActivityIndicator } from "react-native";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { ActivityIndicator } from "react-native";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { httpCommon } from "@/lib/utils";
 import { TPost } from "@/types";
 import Post from "./post";
 import { ScrollView, SafeAreaView } from "react-native";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 export default function Feed() {
-  const [cursor, setCursor] = useState(0);
-  const [limit, setLimit] = useState(10);
-
   const scrollRef = useRef(null);
-
-  const { data: posts, isFetching } = useQuery<TPost[]>({
-    queryKey: ["get-posts"],
-    async queryFn() {
-      return (await httpCommon.get("post")).data;
-    },
-  });
 
   const {
     data,
@@ -28,7 +18,7 @@ export default function Feed() {
   } = useInfiniteQuery({
     queryKey: ["get-infinite-posts"],
     async queryFn({ pageParam }) {
-      return (await httpCommon.get(`post?cursor=${pageParam || 0}&limit=${5}`))
+      return (await httpCommon.get(`post?cursor=${pageParam || 0}&limit=${10}`))
         .data;
     },
     getNextPageParam: (lastPage, pages, lastPageParam) => {
@@ -50,16 +40,20 @@ export default function Feed() {
     }
   };
 
-  return isFetching ? (
-    <Text>Loading....</Text>
-  ) : (
-    <SafeAreaView>
+  return (
+    <SafeAreaView
+      style={{
+        flex: 1,
+      }}
+    >
       <ScrollView
         onScroll={handleScroll}
         ref={scrollRef}
         style={{
-          height: Dimensions.get("window").height + (31 + 116 + 44),
+          height: "100%",
+          paddingBottom: 100,
         }}
+        showsVerticalScrollIndicator={false}
       >
         {data?.pages
           .map((page) => page.posts)
@@ -67,7 +61,7 @@ export default function Feed() {
           .map((post: TPost) => {
             return <Post key={post.id} post={post} />;
           })}
-        {isFetchingNextPage ? <ActivityIndicator /> : null}
+        {isFetchingNextPage || loading ? <ActivityIndicator /> : null}
       </ScrollView>
     </SafeAreaView>
   );
