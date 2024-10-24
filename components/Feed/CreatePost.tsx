@@ -7,7 +7,6 @@ import {
   Image,
 } from "react-native";
 import { createPost } from "./create-post.style";
-import { styles } from "@/styles/global";
 import { useAuth } from "@/store/context/auth";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";

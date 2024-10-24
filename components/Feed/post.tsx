@@ -1,4 +1,3 @@
-import { styles } from "@/styles/global";
 import { TComment, TPost } from "@/types";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { View, Text, Image, Pressable } from "react-native";
